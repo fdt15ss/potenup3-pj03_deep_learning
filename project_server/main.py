@@ -66,7 +66,7 @@ async def predict_yolo(file: UploadFile = File(...)):
         detections.append(
             {
                 "box": [x1.item(), y1.item(), x2.item(), y2.item()],
-                "confidence": conf,
+                "confidence": conf.item(),
                 "label": names[int(label_idx)]
             }
         )
