@@ -17,3 +17,4 @@ pdf
 /vision_project/models/**
 images/*
 !images/yolo_image.jpg
+!images/dogandcat.jpeg
