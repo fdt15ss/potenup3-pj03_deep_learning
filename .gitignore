@@ -10,5 +10,10 @@ wheels/
 .venv
 pdf
 /dataset
-/models
+/models/**
 /runs
+/DogCatProject-1
+/project_server/images/**
+/vision_project/models/**
+images/*
+!images/yolo_image.jpg
