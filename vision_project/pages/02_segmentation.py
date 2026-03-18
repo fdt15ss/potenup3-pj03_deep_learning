@@ -8,7 +8,7 @@ import numpy as np
 # -------------------------
 @st.cache_resource
 def load_model():
-    return YOLO("./models/yolo26n-seg.pt")
+    return YOLO("../models/yolo26n-seg.pt")
 
 model = load_model()
 
