@@ -11,6 +11,10 @@ import streamlit as st
 from ultralytics import YOLO
 from PIL import Image
 import numpy as np
+import requests
+
+FASTAPI_URL = "http://localhost:8080"
+
 
 # 모델 로드
 model = YOLO("../models/yolo26n.pt")
@@ -144,6 +148,13 @@ predict_button = st.button(
     width="stretch"
 )
 
+# 버튼2
+predict_button2 = st.button(
+    "Fastapi에서 예측하기", 
+    type="secondary",
+    width="stretch"
+)
+
 # 예측 실행
 if predict_button:
     st.markdown("### 🔍 예측 결과")
@@ -184,3 +195,24 @@ if predict_button:
                 )
 
 # UI가 확정되었다면 이제 구조를 그대로 유지하고 예쁘게 꾸며달라고 요청하기
+if predict_button2:
+    st.markdown("### 🔍 예측 결과")
+    if uploaded_file is None:
+        st.warning("먼저 이미지를 업로드해주세요!")
+    else:
+        detect_image_url = f"{FASTAPI_URL}/detect_image"
+        with st.spinner("🔍 예측 중입니다..."):
+            # 이미지 가져오기
+            
+            # f는 이미지를 바이너리 형태로 불러오는 것이다.
+            files = {
+                "file": (
+                    uploaded_file.name, 
+                    uploaded_file.getvalue(),
+                    uploaded_file.type
+                )
+            }
+
+            response = requests.post(url=detect_image_url, files=files)
+            # if response.status_code == 200:
+            st.write(response.json())

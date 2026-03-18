@@ -15,6 +15,7 @@ pdf
 /DogCatProject-1
 /project_server/images/**
 /vision_project/models/**
-images/*
-!images/yolo_image.jpg
-!images/dogandcat.jpeg
+/강의 자료
+/bus.jpg
+.env
+/vision_project/images/**
