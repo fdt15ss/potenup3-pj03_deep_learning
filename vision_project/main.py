@@ -26,6 +26,16 @@ pages = [
         title="Segmentation",
         icon="😊",
     ),
+    st.Page(
+        page="pages/03_clip.py",
+        title="Clip",
+        icon="😊",
+    ),
+    st.Page(
+        page="pages/fastapi_server_test.py",
+        title="FastAPI 서버 연결 페이지",
+        icon="🧪"
+    )
     
 ]
 

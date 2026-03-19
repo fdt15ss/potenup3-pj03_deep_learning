@@ -86,3 +86,27 @@ async def predict_yolo(file: UploadFile = File(...)):
         "time": datetime.now().strftime("%Y%m%d%H%M%S"),
         "object_detection": detections
     }# (경로가 project_server에 있을 때) uvicorn main:app --port 8080 --reload
+
+@app.post("/similarity")
+async def similarity(file: UploadFile = File(...)):
+    
+    # 1️⃣ 파일 한 번만 읽기
+    contents = await file.read()
+
+    # 2️⃣ PIL 이미지로 변환 (CLIP용)
+    image = Image.open(io.BytesIO(contents)).convert("RGB")
+
+    # 👉 여기서 CLIP 넣으면 됨
+    # image_input = preprocess(image).unsqueeze(0).to(device)
+
+    # 3️⃣ 파일 저장
+    now = datetime.now().strftime("%Y%m%d%H%M%S")
+    file_name = f"images/{now}-{file.filename}"
+
+    with open(file_name, "wb") as f:
+        f.write(contents)
+
+    return {
+        "message": "이미지를 저장했습니다.",
+        "filename": file_name,
+    }

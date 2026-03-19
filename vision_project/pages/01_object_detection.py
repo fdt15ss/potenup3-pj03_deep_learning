@@ -1,4 +1,3 @@
-# ChatGPT를 활용해서 업데이트한 결과
 # 페이지 목표
 # title: Object Detection 체험하기
 # markdown ## YOLO
@@ -11,208 +10,159 @@ import streamlit as st
 from ultralytics import YOLO
 from PIL import Image
 import numpy as np
-import requests
 
-FASTAPI_URL = "http://localhost:8080"
+# 페이지 설정
+st.set_page_config(
+    page_title="Object Detection 체험하기",
+    page_icon="🔍",
+    layout="centered"
+)
 
-
-# 모델 로드
-model = YOLO("../models/yolo26n.pt")
-
+# ✅ 라이트 테마 + 전체 UI 스타일
 st.markdown("""
 <style>
 /* 전체 배경 */
-.stApp {
-    background: linear-gradient(135deg, #0f172a, #1e293b);
-    color: white;
+.main {
+    background-color: #f8fafc;
 }
 
-/* 제목 스타일 */
-h1 {
+/* 메인 타이틀 */
+.main-title {
     text-align: center;
+    font-size: 40px;
     font-weight: 800;
-    font-size: 42px;
-    background: linear-gradient(90deg, #38bdf8, #818cf8);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #0f172a;
+    margin-bottom: 10px;
 }
 
-/* 카드 스타일 */
-[data-testid="stExpander"] {
+/* 서브 설명 */
+.subtitle {
+    text-align: center;
+    font-size: 16px;
+    color: #475569;
+    margin-bottom: 30px;
+}
+
+/* 카드 공통 */
+.card {
+    background-color: white;
+    padding: 20px;
     border-radius: 16px;
-    border: 1px solid rgba(255,255,255,0.1);
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(10px);
+    margin-bottom: 20px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* 결과 카드 hover */
+.card:hover {
+    transform: translateY(-3px);
+    transition: 0.2s;
+}
+
+/* 라벨 스타일 */
+.label {
+    font-weight: 600;
+    color: #2563eb;
+}
+
+/* confidence */
+.conf {
+    color: #16a34a;
+    font-weight: 600;
+}
+
+/* 좌표 */
+.coord {
+    color: #d97706;
+}
+
+/* 버튼 꾸미기 */
+.stButton > button {
+    background-color: #2563eb;
+    color: white;
+    border-radius: 10px;
+    height: 50px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.stButton > button:hover {
+    background-color: #1d4ed8;
 }
 
 /* 업로드 박스 */
 [data-testid="stFileUploader"] {
-    border-radius: 16px;
-    border: 2px dashed #38bdf8;
+    border: 2px dashed #cbd5f5;
     padding: 20px;
-    background-color: rgba(56, 189, 248, 0.05);
-}
-
-/* 버튼 */
-.stButton > button {
-    width: 100%;
-    height: 50px;
-    border-radius: 12px;
-    font-size: 18px;
-    font-weight: bold;
-    background: linear-gradient(90deg, #38bdf8, #6366f1);
-    color: white;
-    border: none;
-    transition: 0.3s;
-}
-
-.stButton > button:hover {
-    transform: scale(1.03);
-    box-shadow: 0px 0px 15px rgba(56,189,248,0.6);
-}
-
-/* 결과 카드 */
-[data-testid="stVerticalBlock"] > div:has(div[data-testid="stImage"]) {
-    background: rgba(255,255,255,0.05);
-    border-radius: 16px;
-    padding: 20px;
-    margin-top: 20px;
-}
-
-/* 텍스트 결과 박스 */
-[data-testid="stContainer"] {
-    border-radius: 16px;
-    padding: 15px;
-    background: rgba(0,0,0,0.3);
-    border: 1px solid rgba(255,255,255,0.1);
-}
-
-/* 스피너 */
-[data-testid="stSpinner"] {
-    text-align: center;
-    font-size: 18px;
+    border-radius: 15px;
+    background-color: #f1f5f9;
 }
 </style>
 """, unsafe_allow_html=True)
 
+# 모델 로드
+model = YOLO("../models/yolo26n.pt")
 
-# 페이지 제목
-st.title("Object Detection 체험하기")
+# ✅ 타이틀 (HTML)
+st.markdown('<div class="main-title">🔍 Object Detection</div>', unsafe_allow_html=True)
+st.markdown('<div class="subtitle">YOLO 모델로 이미지 속 객체를 탐지해보세요</div>', unsafe_allow_html=True)
 
-# 설명
-with st.expander(label="모델 카드"):
-    st.markdown("#### Object Detection YOLO 모델")
-    st.markdown("""
-    YOLO(You Only Look Once)는 이미지에서 객체를 실시간으로 탐지하는 딥러닝 모델입니다.  
+# 모델 설명 카드
+with st.expander("📌 모델 설명"):
+    st.markdown("""\
+    **YOLO(You Only Look Once)**는 이미지에서 객체를 실시간으로 탐지하는 딥러닝 모델입니다.  
     이미지를 한 번만 보고 객체의 위치와 종류를 동시에 예측합니다.
     """)
 
-# 모델 설명
-with st.expander("📘 모델 설명", expanded=True):
-    st.markdown("""
-    #### YOLO Object Detection 모델
+# 업로드 카드
+st.markdown("### 📂 이미지 업로드")
 
-    - object detection은 이미지를 입력 받아 객체의 위치와 종류를 탐지하는 모델입니다.  
-    - 이미지를 입력하면 객체의 bounding box와 클래스 정보를 내뱉습니다.  
-    - object detection으로 사람, 동물, 사물 등의 위치와 종류를 탐지할 수 있습니다.  
-    - object detection을 학습할 때에는 데이터의 라벨링 품질과 클래스 불균형을 주의해야 합니다.  
-    """)
-
-
-st.markdown(
-    "<p style='text-align:center; color:#94a3b8;'>이미지를 업로드하면 AI가 객체를 탐지합니다</p>",
-    unsafe_allow_html=True
-)
-
-# 파일 업로드)
 uploaded_file = st.file_uploader(
-    label="이미지를 업로드 하세요",
+    "이미지를 업로드 하세요",
     type=["jpg", "jpeg", "png"]
 )
 
-# 이미지 보여주기
+# 이미지 표시
 if uploaded_file is not None:
-    _, col, _ = st.columns(3)
-    with col:
-        image = Image.open(uploaded_file)
-        st.image(
-            image, 
-            caption="업로드한 이미지", 
-            width="stretch"
-        )
+    image = Image.open(uploaded_file)
+    st.image(image, caption="업로드한 이미지", width="stretch")
 
 # 버튼
-predict_button = st.button(
-    "예측하기", 
-    type="primary",
-    width="stretch"
-)
-
-# 버튼2
-predict_button2 = st.button(
-    "Fastapi에서 예측하기", 
-    type="secondary",
-    width="stretch"
-)
+predict_button = st.button("🚀 예측하기", width="stretch")
 
 # 예측 실행
 if predict_button:
-    st.markdown("### 🔍 예측 결과")
     if uploaded_file is None:
-        st.warning("먼저 이미지를 업로드해주세요!")
+        st.warning("⚠️ 먼저 이미지를 업로드해주세요!")
     else:
-        with st.spinner("🔍 예측 중입니다..."):
-            # PIL → numpy 변환
+        with st.spinner("🔍 AI가 이미지를 분석 중입니다..."):
             img_array = np.array(image)
-
-            # YOLO 예측
             results = model(img_array)
-
-            # 결과 이미지 (bounding box 포함)
             result_img = results[0].plot()
 
-        # 결과 출력 (spinner 밖)
-        _, col, _ = st.columns(3)
-        col.image(
-            result_img, 
-            caption="예측 결과", 
-            width="stretch"
-        )
-
-        # 텍스트 결과 출력
+        # 결과 이미지 카드
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        st.markdown("### 🖼️ 예측 결과")
+        st.image(result_img, width="stretch")
+        
+        # 결과 리스트
         st.markdown("### 📊 탐지 결과")
-        with st.container(border=True):
-            for box in results[0].boxes:
+
+        if len(results[0].boxes) == 0:
+            st.info("탐지된 객체가 없습니다.")
+        else:
+            for i, box in enumerate(results[0].boxes):
                 cls_id = int(box.cls[0])
                 conf = float(box.conf[0])
                 label = model.names[cls_id]
-
-                # 좌표 (x1, y1, x2, y2)
                 x1, y1, x2, y2 = box.xyxy[0].tolist()
 
-                st.write(
-                    f"{label} | 신뢰도: {conf:.2f} | 좌표: ({x1:.1f}, {y1:.1f}, {x2:.1f}, {y2:.1f})"
-                )
-
-# UI가 확정되었다면 이제 구조를 그대로 유지하고 예쁘게 꾸며달라고 요청하기
-if predict_button2:
-    st.markdown("### 🔍 예측 결과")
-    if uploaded_file is None:
-        st.warning("먼저 이미지를 업로드해주세요!")
-    else:
-        detect_image_url = f"{FASTAPI_URL}/detect_image"
-        with st.spinner("🔍 예측 중입니다..."):
-            # 이미지 가져오기
-            
-            # f는 이미지를 바이너리 형태로 불러오는 것이다.
-            files = {
-                "file": (
-                    uploaded_file.name, 
-                    uploaded_file.getvalue(),
-                    uploaded_file.type
-                )
-            }
-
-            response = requests.post(url=detect_image_url, files=files)
-            # if response.status_code == 200:
-            st.write(response.json())
+                st.markdown(f"""
+                <div class="card">
+                    <b>#{i+1} 🏷️ {label}</b><br><br>
+                    <span class="label">신뢰도:</span> 
+                    <span class="conf">{conf:.2f}</span><br>
+                    <span class="label">좌표:</span> 
+                    <span class="coord">({x1:.1f}, {y1:.1f}) ~ ({x2:.1f}, {y2:.1f})</span>
+                </div>
+                """, unsafe_allow_html=True)
