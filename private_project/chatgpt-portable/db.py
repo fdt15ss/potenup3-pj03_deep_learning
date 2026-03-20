@@ -7,6 +7,7 @@ cursor = conn.cursor()
 
 # ✅ 테이블 초기화 (서버 시작 시 실행용)
 def init_db():
+    # 테이블 생성
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS chats (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -23,6 +24,13 @@ def init_db():
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
     """)
+
+    # 🔥 컬럼 존재 여부 확인
+    cursor.execute("PRAGMA table_info(chats)")
+    columns = [col[1] for col in cursor.fetchall()]
+
+    if "title" not in columns:
+        cursor.execute("ALTER TABLE chats ADD COLUMN title TEXT")
 
     conn.commit()
 
@@ -57,3 +65,47 @@ def get_last_chat():
     cursor.execute("SELECT id FROM chats ORDER BY id DESC LIMIT 1")
     row = cursor.fetchone()
     return row[0] if row else None
+
+def get_all_chats():
+    cursor.execute("""
+        SELECT id, created_at, title
+        FROM chats
+        ORDER BY id DESC
+    """)
+    return cursor.fetchall()
+
+def get_chat_title(chat_id):
+    cursor.execute("""
+        SELECT content FROM messages
+        WHERE chat_id=? AND role='user'
+        ORDER BY id ASC LIMIT 1
+    """, (chat_id,))
+    
+    row = cursor.fetchone()
+    return row[0][:20] if row else "새 채팅"
+
+
+
+# 채팅 삭제
+def delete_chat(chat_id):
+    cursor.execute("DELETE FROM messages WHERE chat_id=?", (chat_id,))
+    cursor.execute("DELETE FROM chats WHERE id=?", (chat_id,))
+    conn.commit()
+
+
+# 제목 업데이트
+def update_chat_title(chat_id, title):
+    cursor.execute("UPDATE chats SET title=? WHERE id=?", (title, chat_id))
+    conn.commit()
+
+
+# 첫 메시지 기반 제목 생성
+def generate_title(chat_id):
+    cursor.execute("""
+        SELECT content FROM messages
+        WHERE chat_id=? AND role='user'
+        ORDER BY id ASC LIMIT 1
+    """, (chat_id,))
+    
+    row = cursor.fetchone()
+    return row[0][:20] if row else "새 채팅"
