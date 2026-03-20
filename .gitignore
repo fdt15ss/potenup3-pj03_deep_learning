@@ -19,3 +19,4 @@ pdf
 /bus.jpg
 .env
 /vision_project/images/**
+google_vision_api.json
