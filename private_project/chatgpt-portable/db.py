@@ -52,3 +52,8 @@ def get_messages(chat_id):
     rows = cursor.fetchall()
 
     return [{"role": r, "content": c} for r, c in rows]
+
+def get_last_chat():
+    cursor.execute("SELECT id FROM chats ORDER BY id DESC LIMIT 1")
+    row = cursor.fetchone()
+    return row[0] if row else None

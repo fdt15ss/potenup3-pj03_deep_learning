@@ -75,7 +75,7 @@ if user_input:
 
     # 4. GPT 호출
     response = client.responses.create(
-        model="gpt-5.3",
+        model="gpt-5.4",
         input=messages
     )
 
