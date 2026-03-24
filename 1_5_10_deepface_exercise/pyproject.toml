@@ -1,0 +1,27 @@
+[project]
+name = "deepface-exercise"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "deepface>=0.0.99",
+    "jupyter>=1.1.1",
+    "matplotlib>=3.10.8",
+    "tensorrt>=10.16.0.72",
+    "tf-keras>=2.21.0",
+    "torch>=2.10.0",
+    "torchaudio>=2.10.0",
+    "torchvision>=0.25.0",
+    "ultralytics>=8.4.24",
+]
+
+[tool.uv.sources]
+torch = { index = "pytorch" }
+torchvision = { index = "pytorch" }
+deepface = { git = "https://github.com/serengil/deepface.git" }
+
+[[tool.uv.index]]
+name = "pytorch"
+url = "https://download.pytorch.org/whl/cu126"
+explicit = true
