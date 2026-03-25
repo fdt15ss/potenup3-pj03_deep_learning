@@ -16,6 +16,11 @@ pages = [
         title="츤데레 챗봇",
         icon="😊",
     ),
+    st.Page(
+        page="pages/chatbot_api_history.py",
+        title="ChatBot History API",
+        icon="😊",
+    ),
     
     
 ]
