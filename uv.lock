@@ -2997,6 +2997,19 @@ wheels = [
 ]
 
 [[package]]
+name = "ollama"
+version = "0.6.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "httpx" },
+    { name = "pydantic" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/9d/5a/652dac4b7affc2b37b95386f8ae78f22808af09d720689e3d7a86b6ed98e/ollama-0.6.1.tar.gz", hash = "sha256:478c67546836430034b415ed64fa890fd3d1ff91781a9d548b3325274e69d7c6", size = 51620, upload-time = "2025-11-13T23:02:17.416Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/47/4f/4a617ee93d8208d2bcf26b2d8b9402ceaed03e3853c754940e2290fed063/ollama-0.6.1-py3-none-any.whl", hash = "sha256:fc4c984b345735c5486faeee67d8a265214a31cbb828167782dc642ce0a2bf8c", size = 14354, upload-time = "2025-11-13T23:02:16.292Z" },
+]
+
+[[package]]
 name = "onnxruntime"
 version = "1.24.4"
 source = { registry = "https://pypi.org/simple" }
@@ -3298,6 +3311,7 @@ dependencies = [
     { name = "joblib" },
     { name = "jupyter" },
     { name = "mediapipe" },
+    { name = "ollama" },
     { name = "openai" },
     { name = "openai-whisper" },
     { name = "opencv-contrib-python" },
@@ -3329,6 +3343,7 @@ requires-dist = [
     { name = "joblib", specifier = ">=1.5.3" },
     { name = "jupyter", specifier = ">=1.1.1" },
     { name = "mediapipe", specifier = "==0.10.14" },
+    { name = "ollama", specifier = ">=0.6.1" },
     { name = "openai", specifier = ">=2.29.0" },
     { name = "openai-whisper", specifier = ">=20250625" },
     { name = "opencv-contrib-python", specifier = ">=4.13.0.92" },
