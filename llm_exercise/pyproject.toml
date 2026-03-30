@@ -1,0 +1,24 @@
+[project]
+name = "llm-exercise"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "accelerate>=1.13.0",
+    "bitsandbytes>=0.49.2",
+    "datasets>=4.8.4",
+    "jupyter>=1.1.1",
+    "torch>=2.10.0",
+    "torchvision>=0.25.0",
+    "transformers==4.50.0",
+]
+[tool.uv.sources]
+torch = { index = "pytorch" }
+torchvision = { index = "pytorch" }
+torchaudio = { index = "pytorch" }
+
+[[tool.uv.index]]
+name = "pytorch"
+url = "https://download.pytorch.org/whl/cu126"
+explicit = true
